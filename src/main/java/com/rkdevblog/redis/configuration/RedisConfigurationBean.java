@@ -13,6 +13,8 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
+import java.time.Duration;
+
 @Configuration
 public class RedisConfigurationBean {
 
@@ -64,8 +66,10 @@ public class RedisConfigurationBean {
     @Bean
     public RedisConnectionFactory connectionFactory(RedisStandaloneConfiguration redisStandaloneConfiguration) {
 
-        LettuceClientConfiguration configuration = LettuceClientConfiguration.builder()
-                .clientOptions(clientOptions()).build();
+        LettuceClientConfiguration configuration = LettuceClientConfiguration.builder().useSsl().disablePeerVerification().and()
+                .clientOptions(clientOptions())
+                .commandTimeout(Duration.ofSeconds(10))
+                .build();
 
         return new LettuceConnectionFactory(redisStandaloneConfiguration, configuration);
     }
